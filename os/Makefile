@@ -15,6 +15,13 @@ KERNEL_ENTRY_PA := 0x80200000
 # Binutils
 OBJDUMP := rust-objdump --arch-name=riscv64
 OBJCOPY := rust-objcopy --binary-architecture=riscv64
+LLVMOBJCOPY := llvm-objcopy --binary-architecture=riscv64
+
+build: $(KERNEL_BIN)
+
+$(KERNEL_BIN): kernel
+	@$(LLVMOBJCOPY) $(KERNEL_ELF) --strip-all -O binary $@
+
 
 kernel:
 	@cargo build --release
@@ -22,19 +29,19 @@ kernel:
 clean:
 	@cargo clean
 
-run: 
+run: build
 	@qemu-system-riscv64 \
 		-machine virt \
 		-nographic \
 		-bios $(BOOTLOADER) \
 		-device loader,file=$(KERNEL_BIN),addr=$(KERNEL_ENTRY_PA)
 
-dbg:
+dbg: build
 	@qemu-system-riscv64 \
 		-machine virt \
 		-nographic \
 		-bios $(BOOTLOADER) \
-		-device loader,file=$(KERNEL_BIN),addr=$(KERNEL_ENTRY_PA)
+		-device loader,file=$(KERNEL_BIN),addr=$(KERNEL_ENTRY_PA) \
 		-s -S
 gdb:
 	@riscv64-unknown-elf-gdb \
