@@ -3,16 +3,13 @@ MODE := release
 APP_DIR := src/bin
 TARGET_DIR := target/$(TARGET)/$(MODE)
 BUILD_DIR := build
-
 OBJDUMP := rust-objdump --arch-name=riscv64
-# OBJCOPY := rust-objcopy --binary-architecture=riscv64
-OBJCOPY := llvm-objcopy --binary-architecture=riscv64
+OBJCOPY := rust-objcopy --binary-architecture=riscv64
 PY := python3
 
 BASE ?= 0
 CHAPTER ?= 0
 TEST ?= $(CHAPTER)
-
 
 ifeq ($(TEST), 0) # No test, deprecated, previously used in v3
 	APPS :=  $(filter-out $(wildcard $(APP_DIR)/ch*.rs), $(wildcard $(APP_DIR)/*.rs))
@@ -36,8 +33,7 @@ binary:
 	@if [ ${CHAPTER} -gt 3 ]; then \
 		cargo build --release ;\
 	else \
-		cargo build --release ;\
-		# CHAPTER=$(CHAPTER) python3 build.py ;\
+		CHAPTER=$(CHAPTER) python3 build.py ;\
 	fi
 	@$(foreach elf, $(ELFS), \
 		$(OBJCOPY) $(elf) --strip-all -O binary $(patsubst $(TARGET_DIR)/%, $(TARGET_DIR)/%.bin, $(elf)); \
