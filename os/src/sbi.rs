@@ -16,11 +16,14 @@ fn sbi_call(which: usize, arg0: usize, arg1: usize, arg2: usize) -> usize {
     unsafe {
         asm!(
             "ecall",
-            inlateout("x10") arg0 => ret,
+            inlateout("x10") arg0 => ret,   
             in("x11") arg1,
             in("x12") arg2,
             in("x17") which,
         );
+        // NOTE: inlateout("x10") arg0 => ret,  
+        // NOTE: register a0(x10) firstly used for input and later for output
+        // NOTE: {in_var} => {out_var} means arg0 provides input for a0 and ret receives output from a0
     }
     ret
 }

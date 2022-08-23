@@ -3,11 +3,11 @@
 #![feature(panic_info_message)]
 
 use log::*; 
-// [TIPS] need to add dependancy log = "0.4" in Cargo.toml
+// NOTE: need to add dependancy log = "0.4" in Cargo.toml
 
 #[macro_use]
 mod console;
-// [TIPS] macro_use must be placed just upon the mod providing macro_export
+// NOTE: macro_use must be placed just upon the mod providing macro_export
 mod sbi;
 mod lang_items;
 mod logging;
